@@ -1,6 +1,6 @@
 # Scribeleaf
 
-源码仓库：[xdlkc/scribeleaf](https://github.com/xdlkc/scribeleaf)（私有）。
+源码仓库：[xdlkc/scribeleaf](https://github.com/xdlkc/scribeleaf)（公开）。
 
 Scribeleaf 是一个原生 macOS Markdown 编辑器，目标是复刻 Typora 1.14.10 的使用体验。
 
