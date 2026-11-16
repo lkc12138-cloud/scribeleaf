@@ -1,78 +1,94 @@
 # Scribeleaf
 
-源码仓库：[xdlkc/scribeleaf](https://github.com/xdlkc/scribeleaf)（公开）。
+English | [简体中文](./README.zh-CN.md)
 
-Scribeleaf 是一个原生 macOS Markdown 编辑器，目标是复刻 Typora 1.14.10 的使用体验。
+**Scribeleaf** is a native macOS Markdown editor built with an **AppKit (`NSDocument` + `WKWebView`)** shell and an independent **TypeScript + CodeMirror 6** live-preview renderer, targeting compatibility with macOS Typora 1.14.10.
 
-工程使用原生 AppKit 窗口和 WebKit 编辑器。原 Typora 安装包只用作只读参照。
-项目仍在开发，尚未完成完整 1:1 验收。当前完成情况与已知差距见 [STATUS.md](STATUS.md)。
+> **Development Status**: Scribeleaf is **under active development** and has not yet completed full 1:1 product parity or pixel-level verification against Typora 1.14.10. See [`STATUS.md`](./STATUS.md) for current implementation coverage, test evidence, and known gaps, and [`PARITY-MENUS.md`](./PARITY-MENUS.md) for menu inventory comparisons.
 
-产品名为 **Scribeleaf**，结合书写（scribe）与纸页（leaf）。为保留已有设置和恢复记录，内部 bundle identifier 与存储键暂时沿用开发期标识。
+## Architecture & Compatibility
 
-## 开发和运行
+- **Hybrid Native + WebKit Architecture**: Native Swift/AppKit code ([`native/`](./native)) manages `NSDocument` lifecycle, menus, recursive folder monitoring, preferences windows, PDFKit rendering, and Pandoc subprocess execution. The frontend ([`src/`](./src)) bundles via Vite into classic IIFE assets for local `file://` execution inside `WKWebView`.
+- **Standalone Reference Approach**: Typora 1.14.10 is used strictly as a read-only design reference; all editor and native code is independently implemented.
+- **Coexistence & Identifiers**: Distributed as **Scribeleaf** (`build/Scribeleaf.app`, executable `Scribeleaf`, version `0.1.0`) so it runs alongside Typora without naming collisions. The internal bundle identifier (`local.typora-replica.editor`), WebKit bridge names, and storage keys retain compatibility identifiers so existing preferences and recovery records remain intact.
+- **System Requirements**: macOS 13.0 or later (`LSMinimumSystemVersion = 13.0`), packaged as a Universal 2 (`arm64` + `x86_64`) binary.
+
+## Key Capabilities
+
+- **Live-Preview Markdown & Source Modes**: Single editable CodeMirror 6 surface with headings, lists, task checkboxes, blockquotes, fenced code syntax highlighting, KaTeX math, Mermaid diagrams, YAML front matter, TOC, alerts, HTML comments, reference links, footnotes, and lossless source-mode toggling.
+- **Direct Table Editing & Rich Paste**: Interactive table editing with position mapping, undo/redo history, row/column insertion, alignment, row/column drag reordering, and CJK IME composition; rich/plain paste and asynchronous multi-image saving isolated per document.
+- **Workspace Navigation & Modes**: Native file tree and document list sidebar with recursive directory watching, outline sidebar, find & replace, focus mode, typewriter centering, and 6 themes (`GitHub`, `Gothic`, `Night`, `Newsprint`, `Pixyll`, `Whitey`) with bundled open-source fonts (`public/fonts/`, `public/licenses/`).
+- **13 Built-in Export Formats & Repeat Export**:
+  - **Built-in**: Styled HTML, unstyled HTML, PDF (configurable paper size, margins, headers/footers), and full-length PNG (multi-viewport stitch).
+  - **Pandoc Conversions (9 formats)**: `docx`, `odt`, `rtf`, `epub`, `latex`, `mediawiki`, `rst`, `textile`, and `opml`.
+  - **Repeat Last Export**: Native Export menu supports repeating the last export format/destination (`Ctrl+Cmd+E`) and overwriting the previous target with confirmation (switching documents preserves the format and requires confirming a new destination; history is kept per window in memory).
+- **Preferences & Export Settings**: Independent Export Settings window (`File → Export → Export Settings…`) for default folders, Pandoc path, PDF/HTML/PNG options, custom formats/order/templates, custom post-export commands, and YAML front-matter overrides—synced across windows and restarts. Searchable Editor Preferences cover bracket/Markdown pairing, Emoji autocomplete, list/quote indentation, copy/cut behavior, current-block source reveal, and typewriter centering.
+
+## Directory Layout
+
+```text
+scribeleaf/
+├── native/                 # AppKit/NSDocument/WKWebView shell, PDF/PNG/Pandoc export & Preferences UI
+├── src/                    # TypeScript + CodeMirror 6 editor, themes, export builders & bridge
+├── public/
+│   ├── fonts/              # Bundled UI fonts
+│   ├── licenses/           # Third-party font & Pandoc licenses
+│   └── samples/            # Sample Markdown documents
+├── fixtures/               # Acceptance fixture documents (e.g., acceptance.md)
+├── scripts/                # Build, Pandoc fetch, packaging & verification scripts
+├── STATUS.md               # Detailed implementation status, verification results & open gaps
+├── SPEC.md                 # Reconstruction architecture & WebKit bridge specification
+└── PARITY-MENUS.md         # Menu inventory comparison against Typora 1.14.10
+```
+
+## Development & Building
+
+### Browser Renderer Dev Server
+
+Requires Node.js (CI uses Node 22):
 
 ```sh
 npm install
+npm run typecheck
 npm run dev -- --host 127.0.0.1
 ```
 
-## 构建 macOS 应用
+Vite serves on port `5173` by default (see [`vite.config.ts`](./vite.config.ts)).
 
-需要本机 Node.js 和 Xcode Command Line Tools。
+### Build the Native macOS App
+
+Requires local **Node.js** and **Xcode Command Line Tools**:
 
 ```sh
 bash scripts/build-macos.sh
 open 'build/Scribeleaf.app'
 ```
 
-应用支持 HTML、无样式 HTML、PDF、全长 PNG，以及 Pandoc 的九种转换格式。
-构建脚本固定下载官方 Pandoc 3.1.11.1 的 arm64 / x86_64 ZIP，验证预置 SHA256，
-合并并嵌入 Universal 转换器及 GPL 许可证。缺少依赖或校验失败会终止构建。
-首次构建需要网络；后续构建会重新校验缓存的压缩包。
+During the build, [`scripts/fetch-pandoc.sh`](./scripts/fetch-pandoc.sh) downloads official **Pandoc 3.1.11.1** (`arm64` and `x86_64` ZIPs), verifies their SHA256 digests, combines them via `lipo` into `Contents/Resources/Converters/pandoc`, and bundles the GPL license notices (`public/licenses/pandoc/`). First build requires internet access; subsequent builds re-verify cached archives in `.cache/pandoc/`.
 
-原生“导出”菜单支持使用上次格式/目标再导出（Ctrl+Cmd+E）和覆盖上次输出。
-覆盖前会确认。切换文稿后保留格式，并要求重新选择目标。历史保存在当前窗口内，
-重启应用后清空。
+### Verification
 
-通过“文件 → 导出 → Export Settings…”打开独立设置窗口。可设置默认目录、
-Pandoc 路径、PDF 纸张/边距/头尾、HTML 追加内容/目录、PNG 宽度/质量/字号，
-以及转换模板、附加参数和导出后的操作。可添加、重命名、排序和删除自定义格式。
-这些设置在文稿窗口之间同步，并在重启后保留。
-
-设置窗口可搜索并定位选项。“编辑器”支持符号配对、Emoji自动补全、列表/引用缩进、
-复制行为、整行复制/剪切、当前块源码显示，以及打字机模式始终居中。关闭括号配对时，
-Markdown配对会停用并保留原选择。Emoji词表使用MIT开放数据；完整原版词汇对齐仍待验证。
-
-“使用上一次设置导出”保留当时的基础设置，每次重新读取当前文稿的 YAML。
-主题选“当前主题”时，每次使用当前编辑主题。自定义命令从文稿目录运行；
-应用管理的输出会先暂存。目录输出采用逐文件替换与失败回滚，用户命令自行
-写入的其它内容不属于该输出事务。
-
-## 验收
-
-启动开发服务器后运行：
+After starting the dev server (`npm run dev -- --host 127.0.0.1`):
 
 ```sh
-APP_URL=http://127.0.0.1:5174 node scripts/verify-browser.mjs
+APP_URL=http://127.0.0.1:5173 node scripts/verify-browser.mjs
 node scripts/verify-export.mjs
 ```
 
-`APP_URL` 应与开发服务器输出的地址一致。当前会话使用 5174。浏览器脚本
-使用 agent-browser。可用 `AGENT_BROWSER` 指定 CLI 的绝对路径。验收
-文档位于 `fixtures/acceptance.md`。截图与测试结果位于 `evidence/`。
+- `verify-browser.mjs` drives the live editor via `agent-browser` (override path with `AGENT_BROWSER`) against [`fixtures/acceptance.md`](./fixtures/acceptance.md).
+- Native bundle check: `node scripts/verify-bundle.mjs dist`
+- Local JSDOM regressions (do not replace real browser/WebKit verification): `node scripts/verify-export-formats.mjs` and `node scripts/verify-nested-editing.mjs`
+- Standalone native test harnesses: `python3 scripts/verify-image-export.py` and `python3 scripts/verify-native-export-bridge.py` (see [`STATUS.md`](./STATUS.md) for real WebKit and save-panel evidence)
 
-导出接线和嵌套编辑的本地回归分别为 `scripts/verify-export-formats.mjs` 与
-`scripts/verify-nested-editing.mjs`。它们使用 JSDOM，不能替代真实浏览器验收。
-`scripts/verify-image-export.py`、`scripts/verify-native-export-bridge.py` 会生成
-独立的原生验收应用；真实 WebKit 和保存面板结果见 `STATUS.md`。
+## Packaging & GitHub Releases
 
-## GitHub Release 包
+Build local Universal (`arm64` + `x86_64`) ZIP and DMG packages plus `SHA256SUMS`:
 
-最低 macOS 13，Universal ZIP / DMG 均包含 arm64 与 x86_64。
-`Release packages` 在 PR、main、release/** 分支和手动运行时生成经过校验的 Actions 产物；
-两种原生运行器下载同一份包，校验 SHA256、架构、部署目标、签名与原生启动。
-推送与应用版本完全相同的 `v<major>.<minor>.<patch>` tag 后，所有检查通过才创建 **draft Release**。
-在 GitHub 审阅后手动发布；工作流不会自动对外发布正式版本，也不会合并 PR。
-下载 ZIP、DMG 和 SHA256SUMS 后，在同一目录运行 `shasum -a 256 -c SHA256SUMS`。
-当前分发包仅 ad-hoc 签名，没有 Developer ID 签名或 Apple 公证，可能出现 Gatekeeper 提示。
-CI 使用 macOS 15；最低系统由 plist 与每个 Mach-O 切片的部署目标检查，未替代 macOS 13 真机测试。
+```sh
+bash scripts/package-macos.sh
+```
+
+- [`.github/workflows/release.yml`](./.github/workflows/release.yml) runs on PRs, `main`, `release/**`, and manual triggers, validating the packaged ZIP launch on native `macos-15` (`arm64`) and `macos-15-intel` (`x86_64`) runners.
+- Pushing a `v<major>.<minor>.<patch>` tag matching [`native/Info.plist`](./native/Info.plist) and [`package.json`](./package.json) creates a **draft Release** for manual review and publishing.
+- Verify downloaded release artifacts with `shasum -a 256 -c SHA256SUMS`.
+- Release packages are ad-hoc signed without Developer ID signing or Apple notarization, so macOS Gatekeeper warnings may appear on first launch. CI validates macOS 13 deployment targets across Mach-O slices and `Info.plist`, which does not replace physical macOS 13 hardware testing.
