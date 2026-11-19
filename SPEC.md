@@ -59,8 +59,8 @@ Markdown/HTML download, localStorage recovery and browser print.
 - Undo/redo, selection, keyboard shortcuts, paste, Chinese IME compatibility.
 - Native new/open/open folder/save/save as/close with unsaved protection,
   recent files, file list, external updates, recovery and autosave settings.
-- Sidebar tabs for Files and Outline, file tree/document list modes, nested headings, click to scroll, sidebar
-  width drag, folder document search and quick open.
+- Files and Outline tabs stay visible whenever the sidebar is open. File tree/document list modes,
+  nested headings, click to scroll, sidebar width drag, folder document search and quick open.
 - Find/replace with result navigation, case toggle, replace current/all.
 - Source mode, focus mode, typewriter mode, fullscreen, zoom.
 - Theme selection (GitHub, Gothic, Night, Newsprint, Pixyll, Whitey), preferences.

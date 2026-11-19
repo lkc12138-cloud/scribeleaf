@@ -90,6 +90,29 @@ try {
   check('Tree shows one root row and no permanent extra toolbar', `({ok:document.querySelectorAll('[role="treeitem"][aria-level="1"]').length===1&&!document.querySelector('.sidebar-files-tree .sidebar-root-header')&&!document.querySelector('.sidebar-root-toggle')})`);
   run('screenshot', 'evidence/sidebar-tree-native-style.png');
 
+  run('hover', '#editor-wrap');
+  check('Native sidebar shows Files and Outline without hovering with Files selected', `(() => {
+    const tabs = document.querySelector('.sidebar-tabs');
+    const buttons = [...tabs.querySelectorAll('.sidebar-tab')];
+    return {ok: !tabs.matches(':hover') && buttons.length === 2 && buttons.every(button => button.offsetWidth > 0),
+      widths: buttons.map(button => button.offsetWidth)};
+  })()`);
+  run('click', '.sidebar-tab[data-tab="outline"]');
+  run('hover', '#editor-wrap');
+  check('Native sidebar shows Outline headings and keeps both tabs visible after switching', `(() => {
+    const files = document.querySelector('.sidebar-tab[data-tab="files"]');
+    const outline = document.querySelector('.sidebar-tab[data-tab="outline"]');
+    const heading = document.querySelector('.sidebar-outline-label');
+    return {ok: !outline.closest('.sidebar-tabs').matches(':hover') && files.offsetWidth > 0 && outline.offsetWidth > 0 &&
+      outline.classList.contains('active') && heading?.textContent === 'Synthetic sidebar fixture'};
+  })()`);
+  check('Hiding the native sidebar hides both tabs', `(() => {
+    window.typora.command('toggleSidebar');
+    const tabs = [...document.querySelectorAll('.sidebar-tab')];
+    return {ok: getComputedStyle(document.getElementById('sidebar')).display === 'none' &&
+      tabs.length === 2 && tabs.every(tab => tab.offsetWidth === 0)};
+  })()`);
+
 } catch (error) {
   results.push({ name: 'Sidebar browser interaction', passed: false, detail: error.message });
 }

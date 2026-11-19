@@ -51,6 +51,7 @@ Markdown偏好为25项已实现、4项部分实现、2项未实现；iPic专有I
 | 控件快捷键 | `input-shortcut-verification.json`；键盘/菜单全选保留数值框编辑目标，不误改正文 |
 | Typora 格式快捷键 | `shortcut-verification.json` 6/6；行内代码/删除线、脚注、水平线、替换和保存为；修复 CM 忽略打印字符 Shift 导致的冲突 |
 | 文件树与文档列表 | `sidebar-tree-verification.json` 21/21；真实浏览器目录排序/折叠、同名路径、筛选祖先、键盘和原生CSS |
+| 侧栏标签（#4） | `scripts/verify-sidebar-browser.mjs` 24/24，覆盖未悬停时的标签显示、大纲切换和隐藏侧栏。隔离 WebKit 加载应用包内的渲染资源验证 8/8，覆盖中文标签、双向切换和侧栏隐藏。两种引擎均在修复前复现标签不可见。 |
 | 原生文件导航 | `native-navigation.json`；实际快捷键切换列表/树，最终验收窗口无临时副本条目 |
 | 原生目录与恢复 | `native-files-verification.json` 38/38；5107文件、真实根/嵌套增删改名、新目录、合并/去重/关闭取消、旧恢复记录及UTF16/BOM。当前宿主实际使用DispatchSource后备，FSEvents启动不可用 |
 | 侧栏更新集成 | `folder-updates-verification.json` 9/9；真实应用boot/bridge/sidebar的JSDOM检查，保持正文、焦点、筛选选区及隐藏/大纲状态。不是原生视觉验收 |
