@@ -17,7 +17,7 @@
 
 - **实时预览与源码模式**：基于 CodeMirror 6 的单栏所见即所得写作区，支持标题、列表、任务复选框、引用块、围栏代码高亮、KaTeX 数学公式、Mermaid 图表、YAML 元信息、内容目录（TOC）、警告框、HTML 注释、引用式链接与脚注，支持无损切换完整源码模式。
 - **表格直接编辑与粘贴处理**：支持表格实时写回、撤销重做、行列增删与对齐、行列拖动及中文输入法组合输入；支持富文本/纯文本粘贴、异步多图落盘与按文档隔离的图片引用。
-- **工作区侧栏与写作模式**：原生文件树与文档列表（含递归文件夹变化监测）、大纲侧栏、查找替换、专注模式、打字机模式，内置六套主题（`GitHub`、`Gothic`、`Night`、`Newsprint`、`Pixyll`、`Whitey`）及开放许可字体（[`public/fonts/`](./public/fonts)、[`public/licenses/`](./public/licenses)）。
+- **工作区侧栏与写作模式**：侧栏支持文件树、文档列表、递归文件夹监测和大纲。侧栏打开时，「文件」与「大纲」标签始终可见。另支持查找替换、专注模式、打字机模式，内置六套主题（`GitHub`、`Gothic`、`Night`、`Newsprint`、`Pixyll`、`Whitey`）及开放许可字体（[`public/fonts/`](./public/fonts)、[`public/licenses/`](./public/licenses)）。
 - **13 种导出格式与重复导出**：
   - **内置导出**：带样式 HTML、无样式 HTML、PDF（支持纸张、边距与页眉页脚）以及全长 PNG（多视口分段拼接）。
   - **Pandoc 转换（9 种格式）**：`docx`、`odt`、`rtf`、`epub`、`latex`、`mediawiki`、`rst`、`textile`、`opml`。

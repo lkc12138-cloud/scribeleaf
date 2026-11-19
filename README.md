@@ -17,7 +17,7 @@ English | [简体中文](./README.zh-CN.md)
 
 - **Live-Preview Markdown & Source Modes**: Single editable CodeMirror 6 surface with headings, lists, task checkboxes, blockquotes, fenced code syntax highlighting, KaTeX math, Mermaid diagrams, YAML front matter, TOC, alerts, HTML comments, reference links, footnotes, and lossless source-mode toggling.
 - **Direct Table Editing & Rich Paste**: Interactive table editing with position mapping, undo/redo history, row/column insertion, alignment, row/column drag reordering, and CJK IME composition; rich/plain paste and asynchronous multi-image saving isolated per document.
-- **Workspace Navigation & Modes**: Native file tree and document list sidebar with recursive directory watching, outline sidebar, find & replace, focus mode, typewriter centering, and 6 themes (`GitHub`, `Gothic`, `Night`, `Newsprint`, `Pixyll`, `Whitey`) with bundled open-source fonts (`public/fonts/`, `public/licenses/`).
+- **Workspace Navigation & Modes**: Sidebar with file tree and document list modes, recursive directory watching, and an outline. Both Files and Outline tabs stay visible whenever the sidebar is open. Also includes find & replace, focus mode, typewriter centering, and 6 themes (`GitHub`, `Gothic`, `Night`, `Newsprint`, `Pixyll`, `Whitey`) with bundled open-source fonts (`public/fonts/`, `public/licenses/`).
 - **13 Built-in Export Formats & Repeat Export**:
   - **Built-in**: Styled HTML, unstyled HTML, PDF (configurable paper size, margins, headers/footers), and full-length PNG (multi-viewport stitch).
   - **Pandoc Conversions (9 formats)**: `docx`, `odt`, `rtf`, `epub`, `latex`, `mediawiki`, `rst`, `textile`, and `opml`.

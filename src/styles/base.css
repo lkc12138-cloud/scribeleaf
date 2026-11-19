@@ -381,8 +381,7 @@ body[data-theme="github"] #editor .cm-codeblock-line { background: #f8f8f8; }
 body.native-app { background: linear-gradient(to right, var(--sidebar-bg) 0, var(--sidebar-bg) var(--native-sidebar-width, 0px), var(--paper) var(--native-sidebar-width, 0px)); }
 body.native-app #app { padding-top: 28px; }
 body.native-app #sidebar .sidebar-tabs { border: 0; border-radius: 0; margin: 0 8px 14px; height: 28px; }
-body.native-app #sidebar .sidebar-tab { display: none; border: 0; font-size: 14px; padding: 0; background: transparent; font-weight: 400; }
-body.native-app #sidebar .sidebar-tab.active, body.native-app #sidebar .sidebar-tabs:hover .sidebar-tab { display: block; }
+body.native-app #sidebar .sidebar-tab { border: 0; font-size: 14px; padding: 0; }
 body.native-app #sidebar .sidebar-filter { display: none; }
 body.native-app #sidebar .sidebar-root-header { display: flex; align-items: center; gap: 4px; padding: 4px 16px 6px; color: #888; font-size: 14px; font-weight: 400; }
 body.native-app #sidebar .sidebar-row { padding: 0 30px; font-size: 14px; line-height: 30px; gap: 5px; }
